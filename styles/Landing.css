@@ -1,0 +1,13 @@
+.navbar,
+.hero__brandTitle,
+.hero__tagline > button,
+.description__text,
+.dataStripe__container {
+  font-family: var(--secondary-font-family);
+}
+
+.navbar__brandContainer > h1,
+.hero__tagline > div,
+.description__title > h3 {
+  font-family: var(--primary-font-family);
+}

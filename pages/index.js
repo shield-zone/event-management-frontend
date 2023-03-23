@@ -1,9 +1,9 @@
-import styles from "../styles/Home.module.css";
+import Landing from "./Landing";
 
 export default function Home() {
   return (
     <div>
-      <h1>Get Started Here</h1>
+      <Landing />
     </div>
   );
 }

@@ -1,9 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script&family=Raleway:wght@400&display=swap");
+
+:root {
+  --primary-color: #1d1e18;
+  --secondary-color: #fdfffc;
+  --tertiary-color: #941b0c;
+  --primary-font-family: "Dancing Script", cursive;
+  --secondary-font-family: "Raleway", sans-serif;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: var(--secondary-font-family);
 }
 
 a {
