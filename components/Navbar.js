@@ -4,10 +4,13 @@ import {
   useColorModeValue,
   Heading,
   Button,
+  Text,
   extendTheme,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useContext } from "react";
+import { useRouter } from "next/router";
+import { IconUser } from "@tabler/icons-react";
 
 import { AuthContext } from "../service/authContext";
 
@@ -35,13 +38,14 @@ const NavLink = ({ href, children }) => {
           fontWeight: "bold",
         }}
       >
-        {children}
+        <Text>{children}</Text>
       </Box>
     </NextLink>
   );
 };
 
 const Navbar = () => {
+  const router = useRouter();
   const { state, dispatch } = useContext(AuthContext);
 
   return (
@@ -55,9 +59,11 @@ const Navbar = () => {
     >
       <Flex as={"nav"} align={"center"} justify={"space-between"}>
         <Box className="navbar__brandContainer">
-          <Heading as={"h1"} fontSize={"25px"}>
-            {"< Company_Name >"}
-          </Heading>
+          <NextLink href={"/"}>
+            <Heading as={"h1"} fontSize={"25px"}>
+              {"< Company_Name >"}
+            </Heading>
+          </NextLink>
         </Box>
 
         {state.isAuthenticated && (
@@ -72,17 +78,36 @@ const Navbar = () => {
           </Box>
         )}
 
-        <NextLink href={"/login"}>
+        {!state.isAuthenticated ? (
+          // <NextLink href={"/Event"}>
           <Button
             bgColor="#941b0c"
             _hover={{
               bgColor: "#fdfffc",
               color: "#941b0c",
             }}
+            onClick={() =>
+              dispatch({
+                type: "LOGIN",
+                payload: {
+                  username: "Tejas",
+                },
+              })
+            }
           >
             Login
           </Button>
-        </NextLink>
+        ) : (
+          // </NextLink>
+          <Button
+            bgColor="#941b0c"
+            _hover={{
+              bgColor: "#1d1e18",
+            }}
+          >
+            <IconUser />
+          </Button>
+        )}
       </Flex>
     </Box>
   );
