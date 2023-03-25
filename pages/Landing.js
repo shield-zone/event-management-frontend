@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Description from "../components/Description";
@@ -9,9 +8,6 @@ import { data, data_dataStripe } from "../assets/MOCK_DATA";
 const Landing = () => {
   return (
     <div>
-      <Head>
-        <title>Shield Event</title>
-      </Head>
       <Navbar />
       <Hero />
       <Description
