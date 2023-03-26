@@ -3,6 +3,7 @@ import Head from "next/head";
 
 import "../styles/globals.css";
 import "../styles/Landing.css";
+import "../styles/App.css";
 
 import { AuthProvider } from "../service/AuthProvider";
 

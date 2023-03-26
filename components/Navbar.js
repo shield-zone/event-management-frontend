@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -6,6 +7,7 @@ import {
   Button,
   Text,
   extendTheme,
+  Card,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useContext } from "react";
@@ -14,11 +16,7 @@ import { IconUser } from "@tabler/icons-react";
 
 import { AuthContext } from "../service/authContext";
 
-const Links = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
-];
+const Links = [{ name: "Home", href: "/Event" }];
 
 const NavLink = ({ href, children }) => {
   return (
@@ -48,6 +46,13 @@ const Navbar = () => {
   const router = useRouter();
   const { state, dispatch } = useContext(AuthContext);
 
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    dispatch({ type: "LOGOUT" });
+    router.push("/");
+  };
+
   return (
     <Box
       px={15}
@@ -59,7 +64,7 @@ const Navbar = () => {
     >
       <Flex as={"nav"} align={"center"} justify={"space-between"}>
         <Box className="navbar__brandContainer">
-          <NextLink href={"/"}>
+          <NextLink href={!state.isAuthenticated ? "/" : "/Event"}>
             <Heading as={"h1"} fontSize={"25px"}>
               {"< Company_Name >"}
             </Heading>
@@ -79,34 +84,36 @@ const Navbar = () => {
         )}
 
         {!state.isAuthenticated ? (
-          // <NextLink href={"/Event"}>
-          <Button
-            bgColor="#941b0c"
-            _hover={{
-              bgColor: "#fdfffc",
-              color: "#941b0c",
-            }}
-            onClick={() =>
-              dispatch({
-                type: "LOGIN",
-                payload: {
-                  username: "Tejas",
-                },
-              })
-            }
-          >
-            Login
-          </Button>
+          <NextLink href={"/Login"}>
+            <Button
+              bgColor="#941b0c"
+              _hover={{
+                bgColor: "#fdfffc",
+                color: "#941b0c",
+              }}
+            >
+              Login
+            </Button>
+          </NextLink>
         ) : (
-          // </NextLink>
-          <Button
-            bgColor="#941b0c"
-            _hover={{
-              bgColor: "#1d1e18",
-            }}
-          >
-            <IconUser />
-          </Button>
+          <Box position={"relative"}>
+            <Button
+              bgColor="#941b0c"
+              _hover={{
+                bgColor: "#1d1e18",
+              }}
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+            >
+              <IconUser />
+            </Button>
+            {userMenuOpen && (
+              <Card position={"absolute"} zIndex={"100"} right={"0.5"} p="3">
+                <Button onClick={handleLogout} colorScheme="blue">
+                  Logout
+                </Button>
+              </Card>
+            )}
+          </Box>
         )}
       </Flex>
     </Box>

@@ -8,7 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-const EventCard = ({ event }) => {
+const EventCard = ({ event, onClick }) => {
   return (
     <Card
       className="event__eventCard"
@@ -19,6 +19,7 @@ const EventCard = ({ event }) => {
         cursor: "pointer",
         transition: "all 0.3s ease-in-out",
       }}
+      onClick={() => onClick(event)}
     >
       <CardBody>
         <Image
