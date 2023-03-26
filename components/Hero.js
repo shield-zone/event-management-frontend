@@ -30,7 +30,7 @@ const Hero = () => {
           className="hero__tagline"
         >
           <Box>We bring dream events to life</Box>
-          <NextLink href="/register">
+          <NextLink href="/Userregister">
             <Button
               bg={"#1d1e18"}
               marginTop={"5"}

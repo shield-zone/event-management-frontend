@@ -7,14 +7,18 @@ import { AuthContext } from "../service/authContext";
 export default function Home() {
   const router = useRouter();
   const { state } = useContext(AuthContext);
+  const pathname = router.pathname;
+  console.log(pathname);
 
   useEffect(() => {
-    if(state.isAuthenticated) {
+    if (state.isAuthenticated) {
       router.push("/Event");
     }
-  },[state.isAuthenticated])
+  }, [state.isAuthenticated]);
 
   return (
-    <div><Landing /></div>
+    <div>
+      <Landing />
+    </div>
   );
 }

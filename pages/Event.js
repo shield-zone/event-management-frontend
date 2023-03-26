@@ -1,40 +1,126 @@
+import { useState, useEffect, useContext } from "react";
 import { Box, Button, Heading } from "@chakra-ui/react";
-
-import Navbar from "../components/Navbar";
+import { useRouter } from "next/router";
 
 import data from "../assets/EVENT_DATA.json";
+
+import Navbar from "../components/Navbar";
 import EventCard from "../components/EventCard";
+import EventModal from "../components/EventModal";
+import EventRow from "../components/EventRow";
+
+import { AuthContext } from "../service/authContext";
 
 const Event = () => {
-  console.log(data);
+  const [eventModalOpen, setEventModalOpen] = useState(false);
+  const [modalEventData, setModalEventData] = useState({});
+  const [eventsOrganized, setEventsOrganized] = useState([]);
+  const [eventsAttending, setEventsAttending] = useState([]);
+
+  const router = useRouter();
+  const { state } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!state.isAuthenticated) {
+      router.push("/");
+    }
+  }, [state.isAuthenticated]);
+
+  const handleEventCardClick = (data) => {
+    setModalEventData(data);
+    setEventModalOpen(true);
+    console.log("Card Clicked");
+  };
+
+  const closeModal = () => {
+    setModalEventData({});
+    setEventModalOpen(false);
+  };
+
+  const attendEvent = (event) => {
+    setEventsAttending((state) => [...state, event]);
+    setModalEventData({});
+    setEventModalOpen(false);
+  };
+
+  const cancelEvent = () => {
+    setModalEventData({});
+    setEventModalOpen(false);
+    alert("Event Cancelled");
+  };
+
+  const changeAttendeeStatus = (event) => {
+    const newAttendeeEvents = eventsAttending.filter((e) => e.id !== event.id);
+    setEventsAttending(newAttendeeEvents);
+    setModalEventData({});
+    setEventModalOpen(false);
+    alert(`Removed Event ${event.event_name}`);
+  };
+
+  const modalActionText = () => {
+    if (eventsAttending.find((e) => e.id === modalEventData.id)) {
+      console.log("Found");
+      return "Change Attendee Status";
+    } else if (eventsOrganized.find((e) => e.id === modalEventData.id)) {
+      return "Cancel Event";
+    }
+
+    return "Attend Event";
+  };
+
+  const getModalAction = () => {
+    if (eventsAttending.find((e) => e.id === modalEventData.id)) {
+      console.log("Found");
+      return changeAttendeeStatus;
+    } else if (eventsOrganized.find((e) => e.id === modalEventData.id)) {
+      return cancelEvent;
+    }
+
+    return attendEvent;
+  };
+
   return (
     <div>
       <Navbar />
 
-      <Box my={"5"} mx={"5"} className="event__event">
-        <Box
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-        >
-          <Heading as="h2" fontSize={"2xl"}>
-            Event Recommendations For You:{" "}
-          </Heading>
+      <EventModal
+        isOpen={eventModalOpen}
+        setEventModalOpen={closeModal}
+        data={modalEventData}
+        btnAction={getModalAction()}
+        actionBtnText={modalActionText()}
+      />
+
+      <Box display="flex" justifyContent="flex-end" mt="5" mb="-8" mx="5">
+        <Box>
+          <Button colorScheme="gray" marginRight="3">
+            Past Events
+          </Button>
           <Button colorScheme="orange">+ Organize New Event</Button>
         </Box>
-        <Box
-          display={"flex"}
-          flexWrap={"wrap"}
-          justifyContent={"space-between"}
-          rowGap={"5"}
-          my={"5"}
-          mx={"3"}
-        >
-          {data.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </Box>
       </Box>
+
+      {eventsOrganized.length ? (
+        <EventRow
+          title="Events Organized by You:"
+          data={eventsOrganized}
+          onCardClick={handleEventCardClick}
+        />
+      ) : null}
+
+      {eventsAttending.length ? (
+        <EventRow
+          title="Future Events you're Attending:"
+          data={eventsAttending}
+          onCardClick={handleEventCardClick}
+        />
+      ) : null}
+
+      <EventRow
+        title="Events Recommended for You:"
+        data={data}
+        onCardClick={handleEventCardClick}
+      />
     </div>
   );
 };
