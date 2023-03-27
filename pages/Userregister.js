@@ -9,9 +9,12 @@ import {
   VStack,
   Input,
   Button,
+  Alert,
+  AlertIcon,
+  AlertTitle,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import axios from 'axios'
+import axios from "axios";
 
 import { AuthContext } from "../service/authContext";
 
@@ -24,8 +27,9 @@ function Userregister() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  
   useEffect(() => {
     if (state.isAuthenticated) {
       router.push("/Event");
@@ -45,31 +49,37 @@ function Userregister() {
       name,
       password,
       role,
-      userName
+      userName,
     };
-    
-    fetch("http://localhost:8090/api/v1/users/register", {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify(userObj)
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch(err => console.log(err));
-    if (!showPage1) {
-      dispatch({
-        type: "LOGIN",
-        payload: userObj,
-      });
-      router.push("/Event");
-    } else {
-      router.push("/Organiserform");
-    }
-  };
 
+    fetch("http://localhost:8080/api/v1/users/register", {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(userObj),
+    })
+      .then((response) => {
+        if (response.status === 200 || response.status === 201) {
+          return response.json();
+        } else if (response.status === 400) {
+          setErrorMessage("Invalid Details");
+        } else {
+          setErrorMessage("Something went wrong");
+        }
+        setLoading(false);
+      })
+      .then((data) => {
+        if (data) {
+          router.push("/Login");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
 
   return (
     <ChakraProvider theme={theme}>
@@ -89,9 +99,18 @@ function Userregister() {
             Create Account
           </Text>
           <Text font size="md" align="center">
-            Already have an Account ? <NextLink href={"/Login"} color='red'>Login</NextLink>
+            Already have an Account ?{" "}
+            <NextLink href={"/Login"} color="red">
+              Login
+            </NextLink>
           </Text>
           <br></br>
+          {errorMessage && (
+            <Alert status="error" my={2}>
+              <AlertIcon />
+              <AlertTitle mr={2}>{errorMessage}</AlertTitle>
+            </Alert>
+          )}
           <VStack spacing={2} align="stretch">
             <Input
               placeholder="Name"

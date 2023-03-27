@@ -10,20 +10,24 @@ import {
   VStack,
   Input,
   Button,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Spinner,
 } from "@chakra-ui/react";
-import axios from 'axios'
+import Cookies from "js-cookie";
 
 import { AuthContext } from "../service/authContext";
 
 function Login() {
-
   const { state, dispatch } = useContext(AuthContext);
   const router = useRouter();
 
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  
   const myuserName = (data) => setUserName(data);
   const mypassword = (data) => setPassword(data);
 
@@ -33,32 +37,49 @@ function Login() {
     }
   }, [state.isAuthenticated]);
 
-
-  const getLogin= () => {
-
+  const getLogin = () => {
+    if (loading) return;
+    setErrorMessage("");
     var userlogin = {
       userName,
-      password
+      password,
     };
-    console.log(userlogin);
 
-    fetch("http://localhost:8090/api/v1/secure/login", {
+    fetch("http://localhost:8080/api/v1/secure/login", {
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      method: 'POST',
-      body: JSON.stringify(userlogin)
+      method: "POST",
+      body: JSON.stringify(userlogin),
     })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch(err => console.log(err));
-    
-        dispatch({
-          type: "LOGIN",
-          payload: {}, // pass authtoken here
-        });
-    router.push("/Event");
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 400) {
+          setErrorMessage("Invalid Credentials");
+        } else {
+          setErrorMessage("Something went wrong");
+        }
+        setLoading(false);
+      })
+      .then((data) => {
+        console.log(data);
+        if (data) {
+          Cookies.set("user", data.token);
+          Cookies.set("userId", data.user.userId);
+          Cookies.set("userName", data.user.userName);
+          dispatch({
+            type: "LOGIN",
+            payload: data,
+          });
+          router.push("/Event");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   return (
@@ -74,6 +95,12 @@ function Login() {
             Login Account
           </Text>
           <br></br>
+          {errorMessage && (
+            <Alert status="error" my={2}>
+              <AlertIcon />
+              <AlertTitle mr={2}>{errorMessage}</AlertTitle>
+            </Alert>
+          )}
           <VStack spacing={2} align="stretch">
             <Input
               placeholder="Email Id"
@@ -93,7 +120,7 @@ function Login() {
             width="100%"
             onClick={(e) => getLogin()}
           >
-            login
+            {!loading ? "Login" : <Spinner />}
           </Button>
         </Box>
       </Container>

@@ -23,22 +23,24 @@ const EventCard = ({ event, onClick }) => {
     >
       <CardBody>
         <Image
-          src="https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjJ8fHRlYW18ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60"
-          alt={event.event_name}
-          width={"sm"}
+          src={`https://source.unsplash.com/random?${event.eventType}&${event.eventId}`}
+          alt={event.eventName}
+          width={"100%"}
+          height={"150px"}
         />
         <Stack mt="6" spacing="3">
           <Heading as="h3" fontSize={"2xl"}>
-            {event.event_name}
+            {event.eventName}
           </Heading>
           <Box>
             <Text>
-              <span style={{ fontWeight: "bold" }}>Organizer</span>
-              {" " + event.organizer}
+              <span style={{ fontWeight: "bold" }}>Event Type</span>
+              {" " + event.eventType}
             </Text>
             <Text>
               <span style={{ fontWeight: "bold" }}>Location</span>
-              {" " + event.location}
+              {" " +
+                `${event?.location?.address} ${event?.location?.locationName}, ${event?.location?.state}, ${event?.location?.country}`}
             </Text>
           </Box>
         </Stack>

@@ -20,7 +20,7 @@ const Hero = () => {
           fontWeight="bold"
           className="hero__brandTitle"
         >
-          We are <span>{"< Company_Name >"}</span>
+          We are <span>{"SHIELDEvents"}</span>
         </Box>
 
         <Box
