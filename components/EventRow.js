@@ -12,7 +12,7 @@ const EventRow = ({ title, data, onCardClick }) => {
       </Box>
       <Box display={"flex"} flexWrap={"wrap"} gap={"5"} my={"5"} mx={"3"}>
         {data.map((event) => (
-          <EventCard key={event.id} event={event} onClick={onCardClick} />
+          <EventCard key={event.eventId} event={event} onClick={onCardClick} />
         ))}
       </Box>
     </Box>
