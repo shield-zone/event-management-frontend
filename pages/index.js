@@ -9,13 +9,7 @@ export default function Home() {
   const { state } = useContext(AuthContext);
   const pathname = router.pathname;
   console.log(pathname);
-
-  useEffect(() => {
-    if (state.isAuthenticated) {
-      router.push("/Event");
-    }
-  }, [state.isAuthenticated]);
-
+  
   return (
     <div>
       <Landing />
