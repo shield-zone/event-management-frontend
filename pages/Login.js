@@ -11,16 +11,21 @@ import {
   Input,
   Button,
 } from "@chakra-ui/react";
-// import axios from 'axios'
+import axios from 'axios'
 
 import { AuthContext } from "../service/authContext";
 
 function Login() {
+
   const { state, dispatch } = useContext(AuthContext);
   const router = useRouter();
 
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+
+  
+  const myuserName = (data) => setUserName(data);
+  const mypassword = (data) => setPassword(data);
 
   useEffect(() => {
     if (state.isAuthenticated) {
@@ -28,27 +33,33 @@ function Login() {
     }
   }, [state.isAuthenticated]);
 
-  const myuserName = (data) => setUserName(data);
-  const mypassword = (data) => setPassword(data);
 
-  function getLogin() {
-    console.log(userName);
-    console.log(password);
-    //   axios({url:'',
-    //   method:'POST'
-    //   ,params:{user_name,password}
-    //   ,withCredentials:true
-    // })
-    // .then(response=>{
-    // setLstData(response.data.lstData)
-    dispatch({
-      type: "LOGIN",
-      payload: {}, // pass authtoken here
-    });
-    // })
+  const getLogin= () => {
 
+    var userlogin = {
+      userName,
+      password
+    };
+    console.log(userlogin);
+
+    fetch("http://localhost:8090/api/v1/secure/login", {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(userlogin)
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch(err => console.log(err));
+    
+        dispatch({
+          type: "LOGIN",
+          payload: {}, // pass authtoken here
+        });
     router.push("/Event");
-  }
+  };
 
   return (
     <ChakraProvider theme={theme}>

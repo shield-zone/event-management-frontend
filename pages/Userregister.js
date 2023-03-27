@@ -11,7 +11,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-//import axios from 'axios'
+import axios from 'axios'
 
 import { AuthContext } from "../service/authContext";
 
@@ -20,11 +20,12 @@ function Userregister() {
   const { state, dispatch } = useContext(AuthContext);
 
   const [showPage1, setShowPage1] = useState(true);
-  const [Name, setName] = useState("");
+  const [name, setName] = useState("");
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("user");
 
+  
   useEffect(() => {
     if (state.isAuthenticated) {
       router.push("/Event");
@@ -34,7 +35,6 @@ function Userregister() {
   const myName = (data) => setName(data);
   const myuserName = (data) => setUserName(data);
   const mypassword = (data) => setPassword(data);
-  const myrole = (data) => setRole(data);
 
   const togglePage = () => {
     setShowPage1(!showPage1);
@@ -42,22 +42,23 @@ function Userregister() {
 
   const save = () => {
     var userObj = {
-      userName,
+      name,
       password,
-      Name,
       role,
+      userName
     };
-    /*axios({
-      url:'http://13.126.35.191:7323/atcc1/customer/save'
-      ,method:'POST'
-      ,params:{userObj:JSON.stringify(userObj)}
-      ,withCredentials:true
-    }).then(response => {
-      console.log('Response has come')
-    }).catch(e =>{
-      console.log('Error occured')
-    })*/
-
+    
+    fetch("http://localhost:8090/api/v1/users/register", {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(userObj)
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch(err => console.log(err));
     if (!showPage1) {
       dispatch({
         type: "LOGIN",
@@ -68,6 +69,7 @@ function Userregister() {
       router.push("/Organiserform");
     }
   };
+
 
   return (
     <ChakraProvider theme={theme}>
@@ -87,13 +89,13 @@ function Userregister() {
             Create Account
           </Text>
           <Text font size="md" align="center">
-            Already have an Account ? <NextLink href={"/Login"}>Login</NextLink>
+            Already have an Account ? <NextLink href={"/Login"} color='red'>Login</NextLink>
           </Text>
           <br></br>
           <VStack spacing={2} align="stretch">
             <Input
               placeholder="Name"
-              defaultValue={Name}
+              defaultValue={name}
               onChange={(e) => myName(e.target.value)}
             />
             <Input
@@ -106,12 +108,6 @@ function Userregister() {
               type="password"
               defaultValue={password}
               onChange={(e) => mypassword(e.target.value)}
-            />
-            <Input
-              placeholder="Role"
-              type="text"
-              defaultValue={role}
-              onChange={(e) => myrole(e.target.value)}
             />
           </VStack>
           <br></br>
