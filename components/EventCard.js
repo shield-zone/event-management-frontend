@@ -23,10 +23,10 @@ const EventCard = ({ event, onClick }) => {
     >
       <CardBody>
         <Image
-          src={`https://source.unsplash.com/random?${event.eventType}&${event.eventId}`}
+          src={`https://source.unsplash.com/random/200x200?${event.eventType}&${event.eventId}`}
           alt={event.eventName}
           width={"100%"}
-          height={"150px"}
+          height={"200px"}
         />
         <Stack mt="6" spacing="3">
           <Heading as="h3" fontSize={"2xl"}>

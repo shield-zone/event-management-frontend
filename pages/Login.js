@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 import {
   theme,
   ChakraProvider,
@@ -40,6 +41,8 @@ function Login() {
   const getLogin = () => {
     if (loading) return;
     setErrorMessage("");
+    setLoading(true);
+
     var userlogin = {
       userName,
       password,
@@ -57,14 +60,14 @@ function Login() {
         if (response.status === 200) {
           return response.json();
         } else if (response.status === 400) {
+          setLoading(false);
           setErrorMessage("Invalid Credentials");
         } else {
-          setErrorMessage("Something went wrong");
+          setLoading(false);
+          setErrorMessage("Failed to Login");
         }
-        setLoading(false);
       })
       .then((data) => {
-        console.log(data);
         if (data) {
           Cookies.set("user", data.token);
           Cookies.set("userId", data?.user.userId);
@@ -74,6 +77,7 @@ function Login() {
             payload: data
           });
           router.push("/Event");
+          setLoading(false);
         }
       })
       .catch((err) => {
@@ -123,6 +127,10 @@ function Login() {
           >
             {!loading ? "Login" : <Spinner />}
           </Button>
+          <Text textAlign="right" mt="3">New User? <NextLink href={"/Userregister"}>
+              <span style={{color: "red"}}>Register</span>
+            </NextLink>
+            </Text>
         </Box>
       </Container>
     </ChakraProvider>

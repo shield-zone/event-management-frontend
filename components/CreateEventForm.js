@@ -16,17 +16,11 @@ import LocationForm from "./LocationForm";
 
 const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
   const [eventData, setEventData] = useState({});
+  const [locationData, setLocationData] = useState({});
   const [locationFormOpen, setLocationFormOpen] = useState(false);
 
   const validated = () => {
-    if (
-      eventData.event_name !== "" &&
-      eventData.location !== "" &&
-      eventData.organizer !== ""
-    ) {
-      return true;
-    }
-    return false;
+    return true;
   };
   
 
@@ -57,7 +51,14 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
 
   const handleCreateEvent = () => {
     if (validated()) {
-      btnAction(eventData);
+      const apiBody = {
+        ...eventData,
+        ...locationData,
+      };
+
+      btnAction(apiBody);
+      setEventData({});
+      setLocationData({});
       handleModalClose();
     } else {
       alert("Please fill all the fields");
@@ -89,7 +90,8 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
             <LocationForm
               isOpen={locationFormOpen}
               onClose={() => setLocationFormOpen(false)}
-              onLocationSubmit={handleLocationSubmit}
+              data={locationData}
+              action={setLocationData}
             />
           )}
 
@@ -107,18 +109,19 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
             <Input
               type="date"
               placeholder="Event Start Date"
-              name="eventStartDate"
+              name="startDate"
               value={eventData.eventStartDate}
               onChange={handleChange}
               mb={2}
             />
           </Box>
+
           <Box>
             <Text fontWeight={"bold"}>Event End Date: </Text>
             <Input
               type="date"
               placeholder="Event End Date"
-              name="eventEndDate"
+              name="endDate"
               value={eventData.eventEndDate}
               onChange={handleChange}
               mb={2}
@@ -133,6 +136,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             placeholder="Event Type"
@@ -145,11 +149,12 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
           <Input
             type="number"
             placeholder="Organizer Phone Number"
-            name="organizerPhoneNumber"
+            name="phoneNumber"
             value={eventData.organizerPhoneNumber}
             onChange={handleChange}
             mb={2}
           />
+
           <Box>
             <Text fontWeight={"bold"}>Organizer Residing Since: </Text>
             <Input
@@ -161,6 +166,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
               mb={2}
             />
           </Box>
+
           <Input
             type="number"
             min={0}
@@ -171,6 +177,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             placeholder="Organizer Website"
@@ -178,6 +185,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
             value={eventData.website}
             onChange={handleChange}
           />
+
           <Button
             p={0}
             mb={2}
@@ -188,7 +196,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
             }}
             onClick={() => setLocationFormOpen(true)}
           >
-            Add the location
+            Add event location
           </Button>
         </ModalBody>
 

@@ -6,6 +6,7 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Spinner,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
@@ -16,6 +17,14 @@ import EventRow from "../components/EventRow";
 import CreateEventForm from "../components/CreateEventForm";
 
 import { AuthContext } from "../service/authContext";
+import {
+  deleteEvent,
+  fetchAllEvents,
+  getAttendedEvents,
+  getOrganizedEvents,
+  setEventStatusAsAttending,
+  createNewEvent,
+} from "./api/api";
 
 const Event = () => {
   const [eventModalOpen, setEventModalOpen] = useState(false);
@@ -25,6 +34,8 @@ const Event = () => {
   const [eventsAttending, setEventsAttending] = useState([]);
   const [eventData, setEventData] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [attendEventLoading, setAttendEventLoading] = useState(false);
+  const [eventsLoading, setEventsLoading] = useState(false);
 
   const router = useRouter();
   const { state, dispatch } = useContext(AuthContext);
@@ -32,41 +43,63 @@ const Event = () => {
   console.log(state);
 
   useEffect(() => {
+    const getEventsAttended = async () => {
+      const res = getAttendedEvents(eventData, state);
+      console.log("Attending", res);
+      setEventsAttending(res);
+    };
+
+    if (eventData.length) getEventsAttended();
+  }, [eventData]);
+
+  useEffect(() => {
+    const getEventsOrganized = () => {
+      const res = getOrganizedEvents(eventData, state);
+      console.log("Organized", res);
+    };
+
+    if (eventData.length) getEventsOrganized();
+  }, [eventData]);
+
+  useEffect(() => {
     const getAllEvents = async () => {
-      fetch("http://localhost:8090/api/v1/event/fetch-all-events", {
-        headers: {
-          Authorization: `Bearer ${state.user.token}`,
-        },
-      })
-        .then((response) => {
-          if (response.status === 403) {
-            setErrorMessage("User Unauthenticated");
-            setTimeout(() => {
-              setErrorMessage("");
-              dispatch({ type: "LOGOUT" });
-              Cookies.remove("user");
-              router.push("/");
-            }, 3000);
-          } 
-          
-          else if (response.status !== 200) {
-            setErrorMessage("Failed to fetch events");
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 3000);
-          } 
-          
-          else {
-            return response.json();
-          }
-          return [];
-        })
-        .then((data) => setEventData(data))
-        .catch((err) => console.log(err));
+      setEventsLoading(true);
+      try {
+        const res = await fetchAllEvents(state);
+        const resStatus = res.status;
+        const resData = await res.json();
+        console.log(resStatus, resData);
+
+        if (resStatus === 403) {
+          setErrorMessage("User Unauthenticated");
+          setTimeout(logoutUser, 3000);
+        } else if (resStatus !== 200) {
+          setErrorMessage("Failed to fetch events");
+          setTimeout(() => {
+            setErrorMessage("");
+          }, 3000);
+        } else {
+          console.log("here");
+          setEventData(resData);
+        }
+      } catch (err) {
+        setErrorMessage("Failed to fetch events");
+        setTimeout(() => {
+          setErrorMessage("");
+        }, 3000);
+      }
+      setEventsLoading(false);
     };
     
     getAllEvents();
   }, []);
+
+  const logoutUser = () => {
+    setErrorMessage("");
+    dispatch({ type: "LOGOUT" });
+    Cookies.remove("user");
+    router.push("/");
+  };
 
   const handleEventCardClick = (data) => {
     setModalEventData(data);
@@ -79,24 +112,74 @@ const Event = () => {
     setEventModalOpen(false);
   };
 
-  const attendEvent = (event) => {
-    setEventsAttending((state) => [...state, event]);
-    setModalEventData({});
-    setEventModalOpen(false);
+  const attendEvent = async (event) => {
+    try {
+      const res = await setEventStatusAsAttending(modalEventData, state, false);
 
+      if (res.status === 403) {
+        setErrorMessage("User Unauthenticated");
+        setTimeout(logoutUser, 3000);
+        return;
+      } else if (res.status !== 200) {
+        setErrorMessage("Failed to change attendee status");
+        setTimeout(() => {
+          setErrorMessage("");
+        }, 3000);
+      }
+
+      const resData = await res.json();
+      console.log(resData);
+      setEventsAttending((state) => [...state, event]);
+      setModalEventData({});
+      setEventModalOpen(false);
+    } catch (err) {
+      setErrorMessage("Failed to change event status");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+    }
   };
 
-  const cancelEvent = (e) => {
-    const newOrganizedEvents = eventsOrganized.filter(
-      (event) => event.event_name != modalEventData.event_name
-    );
-    setModalEventData(newOrganizedEvents);
-    setEventModalOpen(false);
-    alert("Event Cancelled");
+  const cancelEvent = async (e) => {
+    const res = await deleteEvent(state, modalEventData.eventId);
+
+    if (res.status === 403) {
+      setErrorMessage("User Unauthenticated");
+      setTimeout(logoutUser, 3000);
+      return;
+    } else if (res.status !== 200) {
+      setErrorMessage("Failed to delete event");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+      return;
+    } else {
+      const newOrganizedEvents = eventsOrganized.filter(
+        (event) => event.event_name != modalEventData.event_name
+      );
+      setModalEventData(newOrganizedEvents);
+      setEventModalOpen(false);
+      alert("Event Cancelled");
+    }
   };
 
-  const changeAttendeeStatus = (event) => {
-    const newAttendeeEvents = eventsAttending.filter((e) => e.eventId !== event.eventId);
+  const changeAttendeeStatus = async (event) => {
+    const res = await setEventStatusAsAttending(modalEventData, state, true);
+
+    if (res.status === 403) {
+      setErrorMessage("User Unauthenticated");
+      setTimeout(logoutUser, 3000);
+      return;
+    } else if (res.status !== 200) {
+      setErrorMessage("Failed to change attendee status");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+      return;
+    }
+
+    const newAttendeeEvents = eventsAttending.filter((e) => e.id !== event.id);
+
     setEventsAttending(newAttendeeEvents);
     setModalEventData({});
     setEventModalOpen(false);
@@ -107,7 +190,9 @@ const Event = () => {
     if (eventsAttending.find((e) => e.eventId === modalEventData.eventId)) {
       console.log("Found");
       return "Change Attendee Status";
-    } else if (eventsOrganized.find((e) => e.eventId === modalEventData.eventId)) {
+    } else if (
+      eventsOrganized.find((e) => e.eventId === modalEventData.eventId)
+    ) {
       return "Cancel Event";
     }
 
@@ -117,9 +202,11 @@ const Event = () => {
   const getModalAction = () => {
     if (eventsAttending.find((e) => e.eventId === modalEventData.eventId)) {
       console.log("Found");
-      return changeAttendeeStatus;  // remaining attendee
-    } else if (eventsOrganized.find((e) => e.eventId === modalEventData.eventId)) {
-      return cancelEvent;   // remaining organiser 
+      return changeAttendeeStatus;
+    } else if (
+      eventsOrganized.find((e) => e.eventId === modalEventData.eventId)
+    ) {
+      return cancelEvent;
     }
     return attendEvent;
   };
@@ -132,9 +219,24 @@ const Event = () => {
     setCreateEventFormOpen(true);
   };
 
-  const createEvent = (data) => {
-    setEventsOrganized((state) => [...state, data]);
-    alert("Event Created");
+  const createEvent = async (data) => {
+    const res = await createNewEvent(state, data);
+    const resData = await res.json();
+
+    if (res.status === 403) {
+      setErrorMessage("User Unauthenticated");
+      setTimeout(logoutUser, 3000);
+      return;
+    } else if (res.status !== 200) {
+      setErrorMessage("Failed to create event");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+      return;
+    } else {
+      setEventsOrganized((state) => [...state, resData]);
+      setCreateEventFormOpen(false);
+    }
   };
 
   return (
@@ -200,11 +302,17 @@ const Event = () => {
         />
       ) : null}
 
-      <EventRow
-        title="Events Recommended for You:"
-        data={eventData}
-        onCardClick={handleEventCardClick}
-      />
+      {!eventsLoading ? (
+        <EventRow
+          title="Events Recommended for You:"
+          data={eventData}
+          onCardClick={handleEventCardClick}
+        />
+      ) : (
+        <Box display="flex" alignItens="center" justifyContent="center">
+          <Spinner size="xl" />
+        </Box>
+      )}
     </div>
   );
 };

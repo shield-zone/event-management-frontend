@@ -11,8 +11,8 @@ import {
 } from "@chakra-ui/react";
 import CreateEventForm from "./CreateEventForm";
 
-const LocationForm = ({ isOpen, onClose, onLocationSubmit}) => {
-  const [locationData, setLocationData] = useState({});
+const LocationForm = ({ isOpen, onClose, data, action }) => {
+  const [locationData, setLocationData] = useState(data);
 
   const handleChange = (e) => {
     setLocationData((state) => ({
@@ -21,8 +21,8 @@ const LocationForm = ({ isOpen, onClose, onLocationSubmit}) => {
     }));
   };
 
-  const handleLocationSubmit = () => {
-    onLocationSubmit(locationData);
+  const handleClick = () => {
+    action(locationData);
     onClose();
   };
   return (
@@ -40,6 +40,7 @@ const LocationForm = ({ isOpen, onClose, onLocationSubmit}) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             name="locationName"
@@ -48,6 +49,7 @@ const LocationForm = ({ isOpen, onClose, onLocationSubmit}) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="number"
             name="pincode"
@@ -56,6 +58,7 @@ const LocationForm = ({ isOpen, onClose, onLocationSubmit}) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             name="state"
@@ -64,6 +67,7 @@ const LocationForm = ({ isOpen, onClose, onLocationSubmit}) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             name="country"
@@ -78,8 +82,9 @@ const LocationForm = ({ isOpen, onClose, onLocationSubmit}) => {
           <Button onClick={onClose} mr={2}>
             Close
           </Button>
-          <Button colorScheme="orange" onClick={handleLocationSubmit} >+ Add Location</Button>
-          <CreateEventForm locationData/>
+          <Button colorScheme="orange" onClick={handleClick}>
+            + Add Location
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

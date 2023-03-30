@@ -72,7 +72,7 @@ const Navbar = () => {
       <Box className="navbar__brandContainer">
         <NextLink href={"/"}>
           <Heading as={"h1"} fontSize={"25px"}>
-            {" Shield Events "}
+            Shield Events
           </Heading>
         </NextLink>
       </Box>
