@@ -19,7 +19,7 @@ export const getAttendedEvents = (allEventsData, state) => {
     attendedCount = 0;
 
     event.attendees.forEach((attendee) => {
-      if (attendee.user_id === state.user.user.userId) {
+      if (attendee.user_id === Number(state.user.user.userId)) {
         console.log("here");
         if (attendee.cancelledRegistration) {
           cancelledCount++;
@@ -39,8 +39,8 @@ export const getAttendedEvents = (allEventsData, state) => {
 
 export const getOrganizedEvents = (allEventsData, state) => {
   const newAllEventsData = allEventsData.filter((event) => {
-    console.log(event.organizer.organizerId === state.user.user.userId)
-    return event.organizer.organizerId === state.user.user.userId;
+    console.log(event.organizer.organizerId === Number(state.user.user.userId))
+    return event.organizer.organizerId === Number(state.user.user.userId);
   });
   console.log(newAllEventsData)
   return newAllEventsData;
@@ -94,3 +94,17 @@ export const createNewEvent = async (state, data) => {
 
   return res;
 };
+
+export const getPastEvents = async (state) => {
+  const res = await fetchAllEvents(state);
+  const resData = await res.json();
+
+  const organizedEvents = getOrganizedEvents(resData, state);
+  const attendedEvents = getAttendedEvents(resData, state);
+
+  const allEvents = [...organizedEvents, ...attendedEvents].filter((event) => {
+    return (new Date(event.endDate) < new Date() && !event.deleted);
+  });
+
+  return allEvents;
+}
