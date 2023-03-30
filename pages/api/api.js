@@ -39,8 +39,10 @@ export const getAttendedEvents = (allEventsData, state) => {
 
 export const getOrganizedEvents = (allEventsData, state) => {
   const newAllEventsData = allEventsData.filter((event) => {
-    event.organizer.organizerId === Number(state.user.user.userId);
+    console.log(event.organizer.organizerId === state.user.user.userId)
+    return event.organizer.organizerId === state.user.user.userId;
   });
+  console.log(newAllEventsData)
   return newAllEventsData;
 };
 

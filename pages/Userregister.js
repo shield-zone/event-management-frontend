@@ -12,7 +12,7 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 
@@ -54,7 +54,7 @@ function Userregister() {
       userName,
     };
     console.log(userObj);
-    fetch("http://localhost:8090/api/v1/users/register", {
+    fetch("http://localhost:8080/api/v1/users/register", {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -104,7 +104,7 @@ function Userregister() {
           <Text fontSize="md" align="center">
             Already have an Account ?{" "}
             <NextLink href={"/Login"} color="red">
-            <span style={{color: "red"}}>Login</span>
+              <span style={{ color: "red" }}>Login</span>
             </NextLink>
           </Text>
           <br></br>
@@ -127,9 +127,8 @@ function Userregister() {
             />
             <Input
               placeholder="Password"
-              type="password"
               defaultValue={password}
-              type='password'
+              type="password"
               onChange={(e) => mypassword(e.target.value)}
             />
           </VStack>
