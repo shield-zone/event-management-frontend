@@ -8,8 +8,7 @@ export default function Home() {
   const router = useRouter();
   const { state } = useContext(AuthContext);
   const pathname = router.pathname;
-  console.log(pathname);
-  
+
   return (
     <div>
       <Landing />

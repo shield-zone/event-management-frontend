@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -48,6 +48,7 @@ const Navbar = () => {
 
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
+
   const handleLogout = () => {
     Cookies.remove("user");
     Cookies.remove("userId");
@@ -92,7 +93,7 @@ const Navbar = () => {
       {!state.isAuthenticated ? (
         <NextLink href={"/Login"}>
           <Button
-            bgColor="#f3b52e" 
+            bgColor="#f3b52e"
             _hover={{
               bgColor: "#fdfffc",
               color: "#941b0c",
