@@ -12,6 +12,7 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Spinner
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import axios from "axios";
@@ -45,6 +46,8 @@ function Userregister() {
   };
 
   const save = () => {
+    setLoading(true);
+
     var userObj = {
       name,
       password,
@@ -71,6 +74,7 @@ function Userregister() {
         setLoading(false);
       })
       .then((data) => {
+        setLoading(false);
         if (data) {
           router.push("/Login");
         }
@@ -90,18 +94,18 @@ function Userregister() {
         <br></br>
         <br></br>
         <Box borderWidth="2px" borderRadius="3g" p={4} className="background">
-          <label className="switch">
+          {/* <label className="switch">
             <input type="checkbox" onChange={togglePage} checked={showPage1} />
             <span className="slider"></span>
             <span className="text">{showPage1 ? "Organiser" : "Attendee"}</span>
-          </label>
-          <Text font size="2xl" align="center" fontWeight="10000">
+          </label> */}
+          <Text fontSize="2xl" align="center" fontWeight="10000">
             Create Account
           </Text>
-          <Text font size="md" align="center">
+          <Text fontSize="md" align="center">
             Already have an Account ?{" "}
             <NextLink href={"/Login"} color="red">
-              Login
+            <span style={{color: "red"}}>Login</span>
             </NextLink>
           </Text>
           <br></br>
@@ -136,7 +140,7 @@ function Userregister() {
             width="100%"
             onClick={(e) => save()}
           >
-            Create User
+            {!loading ? "Create User" : <Spinner />}
           </Button>
         </Box>
       </Container>

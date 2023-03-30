@@ -17,25 +17,11 @@ import LocationForm from "./LocationForm";
 
 const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
   const [eventData, setEventData] = useState({});
+  const [locationData, setLocationData] = useState({});
   const [locationFormOpen, setLocationFormOpen] = useState(false);
 
-  const options = [
-    { value: "delhi", label: "Delhi" },
-    { value: "mumbai", label: "Mumbai" },
-    { value: "kolkata", label: "Kolkata" },
-    { value: "chennai", label: "Chennai" },
-    { value: "bangalore", label: "Bangalore" },
-  ];
-
   const validated = () => {
-    if (
-      eventData.event_name !== "" &&
-      eventData.location !== "" &&
-      eventData.organizer !== ""
-    ) {
-      return true;
-    }
-    return false;
+    return true;
   };
 
   const handleChange = (e) => {
@@ -56,7 +42,14 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
 
   const handleCreateEvent = () => {
     if (validated()) {
-      btnAction(eventData);
+      const apiBody = {
+        ...eventData,
+        ...locationData,
+      };
+
+      btnAction(apiBody);
+      setEventData({});
+      setLocationData({});
       handleModalClose();
     } else {
       alert("Please fill all the fields");
@@ -75,8 +68,11 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             <LocationForm
               isOpen={locationFormOpen}
               onClose={() => setLocationFormOpen(false)}
+              data={locationData}
+              action={setLocationData}
             />
           )}
+
           <Input
             mb={2}
             type="text"
@@ -85,31 +81,25 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             value={eventData.eventName}
             onChange={handleChange}
           />
-          <Input
-            type="text"
-            placeholder="Organizer Name"
-            name="organizerName"
-            value={eventData.organizerName}
-            onChange={handleChange}
-            mb={2}
-          />
+
           <Box>
             <Text fontWeight={"bold"}>Event Start Date</Text>
             <Input
               type="date"
               placeholder="Event Start Date"
-              name="eventStartDate"
+              name="startDate"
               value={eventData.eventStartDate}
               onChange={handleChange}
               mb={2}
             />
           </Box>
+
           <Box>
             <Text fontWeight={"bold"}>Event End Date: </Text>
             <Input
               type="date"
               placeholder="Event End Date"
-              name="eventEndDate"
+              name="endDate"
               value={eventData.eventEndDate}
               onChange={handleChange}
               mb={2}
@@ -124,6 +114,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             placeholder="Event Type"
@@ -132,42 +123,16 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             onChange={handleChange}
             mb={2}
           />
-          {/* Add Event Location part here */}
-          <Select
-            value={eventData.location}
-            onChange={(e) =>
-              setEventData((state) => ({ ...state, location: e.target.value }))
-            }
-          >
-            <option value={""} disabled>
-              Select Event Location
-            </option>
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
-          <Button
-            p={0}
-            mb={2}
-            variant={"ghost"}
-            _hover={{
-              textDecoration: "underline",
-              backgroundColor: "transparent",
-            }}
-            onClick={() => setLocationFormOpen(true)}
-          >
-            {"Can't"} find your location?
-          </Button>
+
           <Input
             type="number"
             placeholder="Organizer Phone Number"
-            name="organizerPhoneNumber"
+            name="phoneNumber"
             value={eventData.organizerPhoneNumber}
             onChange={handleChange}
             mb={2}
           />
+
           <Box>
             <Text fontWeight={"bold"}>Organizer Residing Since: </Text>
             <Input
@@ -179,6 +144,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
               mb={2}
             />
           </Box>
+
           <Input
             type="number"
             min={0}
@@ -189,6 +155,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             placeholder="Organizer Website"
@@ -196,6 +163,19 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             value={eventData.website}
             onChange={handleChange}
           />
+
+          <Button
+            p={0}
+            mb={2}
+            variant={"ghost"}
+            _hover={{
+              textDecoration: "underline",
+              backgroundColor: "transparent",
+            }}
+            onClick={() => setLocationFormOpen(true)}
+          >
+            Add event location
+          </Button>
         </ModalBody>
 
         <ModalFooter>

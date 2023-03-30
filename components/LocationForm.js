@@ -10,14 +10,19 @@ import {
   Input,
 } from "@chakra-ui/react";
 
-const LocationForm = ({ isOpen, onClose }) => {
-  const [locationData, setLocationData] = useState({});
+const LocationForm = ({ isOpen, onClose, data, action }) => {
+  const [locationData, setLocationData] = useState(data);
 
   const handleChange = (e) => {
     setLocationData((state) => ({
       ...state,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleClick = () => {
+    action(locationData);
+    onClose();
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -34,6 +39,7 @@ const LocationForm = ({ isOpen, onClose }) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             name="locationName"
@@ -42,6 +48,7 @@ const LocationForm = ({ isOpen, onClose }) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="number"
             name="pincode"
@@ -50,6 +57,7 @@ const LocationForm = ({ isOpen, onClose }) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             name="state"
@@ -58,6 +66,7 @@ const LocationForm = ({ isOpen, onClose }) => {
             onChange={handleChange}
             mb={2}
           />
+
           <Input
             type="text"
             name="country"
@@ -72,7 +81,9 @@ const LocationForm = ({ isOpen, onClose }) => {
           <Button onClick={onClose} mr={2}>
             Close
           </Button>
-          <Button colorScheme="orange">+ Add Location</Button>
+          <Button colorScheme="orange" onClick={handleClick}>
+            + Add Location
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

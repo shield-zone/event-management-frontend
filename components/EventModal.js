@@ -43,15 +43,15 @@ const EventModal = ({
             </Text>
             <Text>
               <span style={{ fontWeight: "bold" }}>Price</span>
-              {" $" + data.eventPrice}
+              {" Rs." + data.eventPrice}
             </Text>
             <Text>
               <span style={{ fontWeight: "bold" }}>Start Date</span>
-              {" $" + data.startDate}
+              {" " + data.startDate}
             </Text>
             <Text>
               <span style={{ fontWeight: "bold" }}>End Date</span>
-              {" $" + data.endDate}
+              {" " + data.endDate}
             </Text>
             <Text>
               <span style={{ fontWeight: "bold" }}>Location</span>

@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 
 import EventCard from "./EventCard";
 
@@ -10,11 +10,11 @@ const EventRow = ({ title, data, onCardClick }) => {
           {title}
         </Heading>
       </Box>
-      <Box display={"flex"} flexWrap={"wrap"} gap={"5"} my={"5"} mx={"3"}>
+      {data.length ? <Box display={"flex"} flexWrap={"wrap"} gap={"5"} my={"5"} mx={"3"}>
         {data.map((event) => (
           <EventCard key={event.eventId} event={event} onClick={onCardClick} />
         ))}
-      </Box>
+      </Box> : <Text my="5" mx="3">No Events Present...</Text>}
     </Box>
   );
 };
