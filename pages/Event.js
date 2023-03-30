@@ -55,7 +55,7 @@ const Event = () => {
   useEffect(() => {
     const getEventsOrganized = () => {
       const res = getOrganizedEvents(eventData, state);
-      console.log("Organized", res);
+      setEventsOrganized(res);
     };
 
     if (eventData.length) getEventsOrganized();
@@ -289,7 +289,7 @@ const Event = () => {
       {eventsOrganized.length ? (
         <EventRow
           title="Events Organized by You:"
-          data={eventsOrganized}
+          data={eventsOrganized.filter(data => !data.deleted)}
           onCardClick={handleEventCardClick}
         />
       ) : null}
@@ -297,7 +297,7 @@ const Event = () => {
       {eventsAttending.length ? (
         <EventRow
           title="Future Events you're Attending:"
-          data={eventsAttending}
+          data={eventsAttending.filter(data => !data.deleted)}
           onCardClick={handleEventCardClick}
         />
       ) : null}
@@ -305,7 +305,7 @@ const Event = () => {
       {!eventsLoading ? (
         <EventRow
           title="Events Recommended for You:"
-          data={eventData}
+          data={eventData.filter(data => !data.deleted)}
           onCardClick={handleEventCardClick}
         />
       ) : (

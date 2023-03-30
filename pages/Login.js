@@ -48,7 +48,7 @@ function Login() {
       password,
     };
 
-    fetch("http://localhost:8090/api/v1/secure/login", {
+    fetch("http://localhost:8080/api/v1/secure/login", {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -74,7 +74,7 @@ function Login() {
           Cookies.set("userName", data?.user.userName);
           dispatch({
             type: "LOGIN",
-            payload: data
+            payload: data,
           });
           router.push("/Event");
           setLoading(false);
@@ -88,7 +88,7 @@ function Login() {
 
   return (
     <ChakraProvider theme={theme}>
-      <Container >
+      <Container>
         <br></br>
         <br></br>
         <br></br>
@@ -114,7 +114,7 @@ function Login() {
             <Input
               placeholder="Password"
               defaultValue={password}
-              type='password'
+              type="password"
               onChange={(e) => mypassword(e.target.value)}
             />
           </VStack>
@@ -127,10 +127,12 @@ function Login() {
           >
             {!loading ? "Login" : <Spinner />}
           </Button>
-          <Text textAlign="right" mt="3">New User? <NextLink href={"/Userregister"}>
-              <span style={{color: "red"}}>Register</span>
+          <Text textAlign="right" mt="3">
+            New User?{" "}
+            <NextLink href={"/Userregister"}>
+              <span style={{ color: "red" }}>Register</span>
             </NextLink>
-            </Text>
+          </Text>
         </Box>
       </Container>
     </ChakraProvider>

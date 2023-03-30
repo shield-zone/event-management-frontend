@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import LocationForm from "./LocationForm";
 
-const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
+const CreateEventForm = ({ isOpen, onClose, data, btnAction, props }) => {
   const [eventData, setEventData] = useState({});
   const [locationData, setLocationData] = useState({});
   const [locationFormOpen, setLocationFormOpen] = useState(false);
@@ -22,7 +22,6 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
   const validated = () => {
     return true;
   };
-  
 
   const handleChange = (e) => {
     setEventData((prevState) => ({
@@ -63,19 +62,6 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
     } else {
       alert("Please fill all the fields");
     }
-
-    console.log(eventData);
-
-    fetch("http://localhost:8090/api/v1/event/create-event-organizer-location", 
-    {
-      headers: {
-        Authorization: `Bearer ${state.user.token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(eventData)
-    })
   };
 
   return (
@@ -204,7 +190,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
           <Button colorScheme="gray" mr={3} onClick={() => handleModalClose()}>
             Close
           </Button>
-          <Button colorScheme="orange" onClick={handleCreateEvent} >
+          <Button colorScheme="orange" onClick={handleCreateEvent}>
             Create Event
           </Button>
         </ModalFooter>
