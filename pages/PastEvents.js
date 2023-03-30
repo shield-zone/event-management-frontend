@@ -6,7 +6,7 @@ import EventModal from "../components/EventModal";
 import Navbar from "../components/Navbar";
 
 import { AuthContext } from "../service/authContext";
-import {getPastEvents} from "./api/api";
+import { getPastEvents } from "./api/api";
 
 const PastEvents = () => {
   const router = useRouter();
@@ -28,16 +28,16 @@ const PastEvents = () => {
       try {
         const resData = await getPastEvents(state);
         setPastEvents(resData);
-      } catch(err) {
+      } catch (err) {
         setErrorMessage("Failed to fetch past events.");
         setTimeout(() => {
           setErrorMessage("");
         }, 3000);
       }
-    }
+    };
 
     fetchEvents();
-  }, [])
+  }, []);
 
   const closeModal = () => {
     setModalEventData({});
@@ -57,6 +57,8 @@ const PastEvents = () => {
         isOpen={eventModalOpen}
         setEventModalOpen={closeModal}
         data={modalEventData}
+        actionBtnText={[]}
+        btnAction={[]}
       />
 
       <EventRow

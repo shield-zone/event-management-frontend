@@ -36,6 +36,7 @@ const Event = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [attendEventLoading, setAttendEventLoading] = useState(false);
   const [eventsLoading, setEventsLoading] = useState(false);
+  const [updateEventModalOpen, setUpdateEventModalOpen] = useState(false);
 
   const router = useRouter();
   const { state, dispatch } = useContext(AuthContext);
@@ -43,9 +44,15 @@ const Event = () => {
   console.log(state);
 
   useEffect(() => {
+    if (!state.isAuthenticated) {
+      router.push("/");
+    }
+  }, [state]);
+
+  useEffect(() => {
     const getEventsAttended = async () => {
       const res = getAttendedEvents(eventData, state);
-      const data = res.filter(filterEvents)
+      const data = res.filter(filterEvents);
       setEventsAttending(res);
     };
 
@@ -55,7 +62,7 @@ const Event = () => {
   useEffect(() => {
     const getEventsOrganized = () => {
       const res = getOrganizedEvents(eventData, state);
-      const data = res.filter(filterEvents)
+      const data = res.filter(filterEvents);
       setEventsOrganized(data);
     };
 
@@ -89,12 +96,13 @@ const Event = () => {
       }
       setEventsLoading(false);
     };
-    
+
     getAllEvents();
   }, []);
 
-  const filterEvents = data => !data.deleted && (new Date(data.endDate) > new Date())
-  
+  const filterEvents = (data) =>
+    !data.deleted && new Date(data.endDate) > new Date();
+
   console.log(eventsOrganized);
   console.log(eventData);
 
@@ -133,9 +141,10 @@ const Event = () => {
 
       const resData = await res.json();
       console.log(resData);
-      setEventsAttending((state) => [...state, event]);
+      setEventsAttending((state) => [...state, modalEventData]);
       setModalEventData({});
       setEventModalOpen(false);
+      console.log(eventsAttending);
     } catch (err) {
       setErrorMessage("Failed to change event status");
       setTimeout(() => {
@@ -162,7 +171,9 @@ const Event = () => {
         (event) => event.eventId != modalEventData.eventId
       );
       setEventsOrganized(newOrganizedEvents);
-      setEventData(state => state.filter(event => event.eventId != modalEventData.eventId))
+      setEventData((state) =>
+        state.filter((event) => event.eventId != modalEventData.eventId)
+      );
       setModalEventData({});
       setEventModalOpen(false);
       alert("Event Cancelled");
@@ -195,26 +206,26 @@ const Event = () => {
   const modalActionText = () => {
     if (eventsAttending.find((e) => e.eventId === modalEventData.eventId)) {
       console.log("Found");
-      return "Change Attendee Status";
+      return ["Close", "Change Attendee Status"];
     } else if (
       eventsOrganized.find((e) => e.eventId === modalEventData.eventId)
     ) {
-      return "Cancel Event";
+      return ["Cancel Event", "Update Event"];
     }
 
-    return "Attend Event";
+    return ["Close", "Attend Event"];
   };
 
   const getModalAction = () => {
     if (eventsAttending.find((e) => e.eventId === modalEventData.eventId)) {
       console.log("Found");
-      return changeAttendeeStatus;
+      return [closeModal, changeAttendeeStatus];
     } else if (
       eventsOrganized.find((e) => e.eventId === modalEventData.eventId)
     ) {
-      return cancelEvent;
+      return [cancelEvent, updateEvent];
     }
-    return attendEvent;
+    return [closeModal, attendEvent];
   };
 
   const closeCreateEventForm = () => {
@@ -245,12 +256,16 @@ const Event = () => {
         setEventData((state) => [...state, resData]);
         setCreateEventFormOpen(false);
       }
-    } catch(err) {
+    } catch (err) {
       setErrorMessage("Failed to fetch event");
       setTimeout(() => {
         setErrorMessage("");
       }, 3000);
     }
+  };
+
+  const updateEvent = () => {
+    setUpdateEventModalOpen(true);
   };
 
   return (
@@ -274,8 +289,12 @@ const Event = () => {
         isOpen={eventModalOpen}
         setEventModalOpen={closeModal}
         data={modalEventData}
+        setModalData={setModalEventData}
         btnAction={getModalAction()}
         actionBtnText={modalActionText()}
+        updateModalOpen={updateEventModalOpen}
+        closeUpdateModal={() => setUpdateEventModalOpen(false)}
+        setEventData={setEventData}
       />
 
       <CreateEventForm
@@ -303,7 +322,9 @@ const Event = () => {
       {eventsOrganized.length ? (
         <EventRow
           title="Events Organized by You:"
-          data={eventsOrganized.filter(data => !data.deleted && (new Date(data.endDate) > new Date()))}
+          data={eventsOrganized.filter(
+            (data) => !data.deleted && new Date(data.endDate) > new Date()
+          )}
           onCardClick={handleEventCardClick}
         />
       ) : null}
@@ -311,7 +332,9 @@ const Event = () => {
       {eventsAttending.length ? (
         <EventRow
           title="Future Events you're Attending:"
-          data={eventsAttending.filter(data => !data.deleted && (new Date(data.endDate) > new Date()))}
+          data={eventsAttending.filter(
+            (data) => !data.deleted && new Date(data.endDate) > new Date()
+          )}
           onCardClick={handleEventCardClick}
         />
       ) : null}
@@ -319,7 +342,9 @@ const Event = () => {
       {!eventsLoading ? (
         <EventRow
           title="All Events:"
-          data={eventData.filter(data => !data.deleted && (new Date(data.endDate) > new Date()))}
+          data={eventData.filter(
+            (data) => !data.deleted && new Date(data.endDate) > new Date()
+          )}
           onCardClick={handleEventCardClick}
         />
       ) : (

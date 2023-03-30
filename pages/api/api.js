@@ -39,10 +39,10 @@ export const getAttendedEvents = (allEventsData, state) => {
 
 export const getOrganizedEvents = (allEventsData, state) => {
   const newAllEventsData = allEventsData.filter((event) => {
-    console.log(event.organizer.organizerId === Number(state.user.user.userId))
+    console.log(event.organizer.organizerId === Number(state.user.user.userId));
     return event.organizer.organizerId === Number(state.user.user.userId);
   });
-  console.log(newAllEventsData)
+  console.log(newAllEventsData);
   return newAllEventsData;
 };
 
@@ -103,8 +103,75 @@ export const getPastEvents = async (state) => {
   const attendedEvents = getAttendedEvents(resData, state);
 
   const allEvents = [...organizedEvents, ...attendedEvents].filter((event) => {
-    return (new Date(event.endDate) < new Date() && !event.deleted);
+    return new Date(event.endDate) < new Date() && !event.deleted;
   });
 
   return allEvents;
-}
+};
+
+export const putEventDetails = async (state, data) => {
+  const body = {
+    eventId: data.eventId,
+    eventName: data.eventName,
+    eventPrice: data.eventPrice,
+    startDate: data.startDate,
+    endDate: data.endDate,
+  };
+
+  const res = await fetch(`${baseUrl}/event/update-event`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${state.user.token}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  return res;
+};
+
+export const putLocationDetails = async (state, data) => {
+  const body = {
+    locationId: data.locationId,
+    locationName: data.locationName,
+    address: data.address,
+    pincode: data.pincode,
+    state: data.state,
+    country: data.country,
+  };
+
+  console.log(data);
+
+  const res = await fetch(`${baseUrl}/location/update-location`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${state.user.token}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  return res;
+};
+
+export const putOrganizerDetails = async (state, data) => {
+  const body = {
+    organizerId: data.organizerId,
+    phoneNumber: data.phoneNumber,
+    rating: data.rating,
+    website: data.website,
+  };
+
+  console.log(data);
+
+  const res = await fetch(`${baseUrl}/organizer/update-organizer`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${state.user.token}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  return res;
+};

@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import UpdateEventModal from "./UpdateEventModal";
 
 const EventModal = ({
   isOpen,
@@ -18,9 +19,26 @@ const EventModal = ({
   data,
   btnAction,
   actionBtnText,
+  updateModalOpen,
+  closeUpdateModal,
+  setModalData,
+  setEventData,
 }) => {
   const handleModalClose = () => {
     setEventModalOpen(false);
+  };
+
+  const handleUpdateModalClose = () => {
+    setEventData((eventData) =>
+      eventData.map((item) => {
+        if (item.eventId === data.eventId) {
+          return data;
+        }
+
+        return item;
+      })
+    );
+    closeUpdateModal();
   };
 
   return (
@@ -31,6 +49,12 @@ const EventModal = ({
         <ModalCloseButton />
 
         <ModalBody>
+          <UpdateEventModal
+            isOpen={updateModalOpen}
+            onClose={handleUpdateModalClose}
+            data={data}
+            setModalData={setModalData}
+          />
           <Image
             src={`https://source.unsplash.com/random?${data.eventType}&${data.eventId}}`}
             alt={data.eventName}
@@ -62,14 +86,17 @@ const EventModal = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="gray" mr={3} onClick={handleModalClose}>
-            Close
-          </Button>
-          {actionBtnText ? (
-            <Button colorScheme="orange" onClick={() => btnAction(data)}>
-              {actionBtnText}
-            </Button>
-          ) : null}
+          {btnAction.map((action, index) => (
+            <>
+              <Button
+                colorScheme={!index ? "red" : "orange"}
+                mr={3}
+                onClick={action}
+              >
+                {actionBtnText[index]}
+              </Button>
+            </>
+          ))}
         </ModalFooter>
       </ModalContent>
     </Modal>
