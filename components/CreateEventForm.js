@@ -9,23 +9,14 @@ import {
   ModalOverlay,
   ModalContent,
   Input,
-  Select,
   Box,
   Text,
 } from "@chakra-ui/react";
 import LocationForm from "./LocationForm";
 
-const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
+const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
   const [eventData, setEventData] = useState({});
   const [locationFormOpen, setLocationFormOpen] = useState(false);
-
-  const options = [
-    { value: "delhi", label: "Delhi" },
-    { value: "mumbai", label: "Mumbai" },
-    { value: "kolkata", label: "Kolkata" },
-    { value: "chennai", label: "Chennai" },
-    { value: "bangalore", label: "Bangalore" },
-  ];
 
   const validated = () => {
     if (
@@ -37,12 +28,22 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
     }
     return false;
   };
+  
 
   const handleChange = (e) => {
     setEventData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleLocationSubmit = (locationData) => {
+    setEventData((prevState) => ({
+      ...prevState,
+      location: locationData,
+    }));
+    setLocationFormOpen(false);
+    console.log(locationData);
   };
 
   const handleModalClose = () => {
@@ -61,6 +62,19 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
     } else {
       alert("Please fill all the fields");
     }
+
+    console.log(eventData);
+
+    fetch("http://localhost:8090/api/v1/event/create-event-organizer-location", 
+    {
+      headers: {
+        Authorization: `Bearer ${state.user.token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(eventData)
+    })
   };
 
   return (
@@ -75,8 +89,10 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             <LocationForm
               isOpen={locationFormOpen}
               onClose={() => setLocationFormOpen(false)}
+              onLocationSubmit={handleLocationSubmit}
             />
           )}
+
           <Input
             mb={2}
             type="text"
@@ -85,14 +101,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             value={eventData.eventName}
             onChange={handleChange}
           />
-          <Input
-            type="text"
-            placeholder="Organizer Name"
-            name="organizerName"
-            value={eventData.organizerName}
-            onChange={handleChange}
-            mb={2}
-          />
+
           <Box>
             <Text fontWeight={"bold"}>Event Start Date</Text>
             <Input
@@ -132,34 +141,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             onChange={handleChange}
             mb={2}
           />
-          {/* Add Event Location part here */}
-          <Select
-            value={eventData.location}
-            onChange={(e) =>
-              setEventData((state) => ({ ...state, location: e.target.value }))
-            }
-          >
-            <option value={""} disabled>
-              Select Event Location
-            </option>
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
-          <Button
-            p={0}
-            mb={2}
-            variant={"ghost"}
-            _hover={{
-              textDecoration: "underline",
-              backgroundColor: "transparent",
-            }}
-            onClick={() => setLocationFormOpen(true)}
-          >
-            {"Can't"} find your location?
-          </Button>
+
           <Input
             type="number"
             placeholder="Organizer Phone Number"
@@ -171,8 +153,8 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
           <Box>
             <Text fontWeight={"bold"}>Organizer Residing Since: </Text>
             <Input
-              type="date"
-              placeholder="Organizer Present at location since"
+              type="number"
+              placeholder="Organizer Present at location Since"
               name="presentSince"
               value={eventData.presentSince}
               onChange={handleChange}
@@ -196,13 +178,25 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
             value={eventData.website}
             onChange={handleChange}
           />
+          <Button
+            p={0}
+            mb={2}
+            variant={"ghost"}
+            _hover={{
+              textDecoration: "underline",
+              backgroundColor: "transparent",
+            }}
+            onClick={() => setLocationFormOpen(true)}
+          >
+            Add the location
+          </Button>
         </ModalBody>
 
         <ModalFooter>
           <Button colorScheme="gray" mr={3} onClick={() => handleModalClose()}>
             Close
           </Button>
-          <Button colorScheme="orange" onClick={handleCreateEvent}>
+          <Button colorScheme="orange" onClick={handleCreateEvent} >
             Create Event
           </Button>
         </ModalFooter>

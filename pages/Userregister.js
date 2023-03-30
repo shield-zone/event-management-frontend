@@ -14,7 +14,6 @@ import {
   AlertTitle,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import axios from "axios";
 
 import { AuthContext } from "../service/authContext";
 
@@ -51,8 +50,8 @@ function Userregister() {
       role,
       userName,
     };
-
-    fetch("http://localhost:8080/api/v1/users/register", {
+    console.log(userObj);
+    fetch("http://localhost:8090/api/v1/users/register", {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -83,7 +82,7 @@ function Userregister() {
 
   return (
     <ChakraProvider theme={theme}>
-      <Container>
+      <Container className="container">
         <br></br>
         <br></br>
         <br></br>
@@ -95,12 +94,12 @@ function Userregister() {
             <span className="slider"></span>
             <span className="text">{showPage1 ? "Organiser" : "Attendee"}</span>
           </label>
-          <Text font size="2xl" align="center" fontWeight="10000">
+          <Text font size="2xl" align="center" className="t">
             Create Account
           </Text>
           <Text font size="md" align="center">
             Already have an Account ?{" "}
-            <NextLink href={"/Login"} color="red">
+            <NextLink href={"/Login"} className="te">
               Login
             </NextLink>
           </Text>
@@ -113,7 +112,7 @@ function Userregister() {
           )}
           <VStack spacing={2} align="stretch">
             <Input
-              placeholder="Name"
+              placeholder="User Name"
               defaultValue={name}
               onChange={(e) => myName(e.target.value)}
             />
@@ -126,6 +125,7 @@ function Userregister() {
               placeholder="Password"
               type="password"
               defaultValue={password}
+              type='password'
               onChange={(e) => mypassword(e.target.value)}
             />
           </VStack>

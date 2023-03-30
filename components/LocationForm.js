@@ -9,8 +9,9 @@ import {
   Button,
   Input,
 } from "@chakra-ui/react";
+import CreateEventForm from "./CreateEventForm";
 
-const LocationForm = ({ isOpen, onClose }) => {
+const LocationForm = ({ isOpen, onClose, onLocationSubmit}) => {
   const [locationData, setLocationData] = useState({});
 
   const handleChange = (e) => {
@@ -18,6 +19,11 @@ const LocationForm = ({ isOpen, onClose }) => {
       ...state,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleLocationSubmit = () => {
+    onLocationSubmit(locationData);
+    onClose();
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -72,7 +78,8 @@ const LocationForm = ({ isOpen, onClose }) => {
           <Button onClick={onClose} mr={2}>
             Close
           </Button>
-          <Button colorScheme="orange">+ Add Location</Button>
+          <Button colorScheme="orange" onClick={handleLocationSubmit} >+ Add Location</Button>
+          <CreateEventForm locationData/>
         </ModalFooter>
       </ModalContent>
     </Modal>

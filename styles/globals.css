@@ -4,7 +4,7 @@
   --primary-color: #1d1e18;
   --secondary-color: #fdfffc;
   --tertiary-color: #941b0c;
-  --primary-font-family: "Dancing Script", cursive;
+  --primary-font-family: "Dancing Script";
   --secondary-font-family: "Raleway", sans-serif;
 }
 
@@ -25,3 +25,7 @@ a {
   margin: 0px;
   padding: 0px;
 }
+
+
+
+
