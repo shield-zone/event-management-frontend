@@ -12,81 +12,35 @@ import {
   Box,
   Text,
 } from "@chakra-ui/react";
-import LocationForm from "./LocationForm";
-
-const CreateEventForm = ({ isOpen, onClose, data, btnAction, props }) => {
-  const [eventData, setEventData] = useState({});
-  const [locationData, setLocationData] = useState({});
-  const [locationFormOpen, setLocationFormOpen] = useState(false);
-
-  const validated = () => {
-    return true;
-  };
+const Updateform = ({ isOpen, onClose }) => {
+  const [updateeventData, setUpdateeventData] = useState({});
 
   const handleChange = (e) => {
-    setEventData((prevState) => ({
+    setUpdateeventData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleLocationSubmit = (locationData) => {
-    setEventData((prevState) => ({
-      ...prevState,
-      location: locationData,
-    }));
-    setLocationFormOpen(false);
-    console.log(locationData);
-  };
-
   const handleModalClose = () => {
-    setEventData({
-      event_name: "",
-      location: "",
-      organizer: "",
-    });
     onClose();
   };
 
-  const handleCreateEvent = () => {
-    if (validated()) {
-      const apiBody = {
-        ...eventData,
-        ...locationData,
-      };
 
-      btnAction(apiBody);
-      setEventData({});
-      setLocationData({});
-      handleModalClose();
-    } else {
-      alert("Please fill all the fields");
-    }
-  };
-
-  return (
-    <Modal isOpen={isOpen} onClose={handleModalClose}>
+return(
+  <Modal isOpen={isOpen} onClose={handleModalClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create a new Event</ModalHeader>
+      <ModalHeader>Update Event</ModalHeader>
         <ModalCloseButton />
-
         <ModalBody>
-          {locationFormOpen && (
-            <LocationForm
-              isOpen={locationFormOpen}
-              onClose={() => setLocationFormOpen(false)}
-              data={locationData}
-              action={setLocationData}
-            />
-          )}
 
           <Input
             mb={2}
             type="text"
             placeholder="Event Name"
             name="eventName"
-            value={eventData.eventName}
+            value={updateeventData.eventName}
             onChange={handleChange}
           />
 
@@ -96,7 +50,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction, props }) => {
               type="date"
               placeholder="Event Start Date"
               name="startDate"
-              value={eventData.eventStartDate}
+              value={updateeventData.eventStartDate}
               onChange={handleChange}
               mb={2}
             />
@@ -108,7 +62,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction, props }) => {
               type="date"
               placeholder="Event End Date"
               name="endDate"
-              value={eventData.eventEndDate}
+              value={updateeventData.eventEndDate}
               onChange={handleChange}
               mb={2}
             />
@@ -118,17 +72,16 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction, props }) => {
             type="number"
             placeholder="Event Price"
             name="eventPrice"
-            value={eventData.eventPrice}
+            value={updateeventData.eventPrice}
             onChange={handleChange}
             mb={2}
           />
-
-
+          
           <Input
             type="number"
             placeholder="Organizer Phone Number"
             name="phoneNumber"
-            value={eventData.organizerPhoneNumber}
+            value={updateeventData.organizerPhoneNumber}
             onChange={handleChange}
             mb={2}
           />
@@ -139,7 +92,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction, props }) => {
               type="number"
               placeholder="Organizer Present at location Since"
               name="presentSince"
-              value={eventData.presentSince}
+              value={updateeventData.presentSince}
               onChange={handleChange}
               mb={2}
             />
@@ -151,7 +104,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction, props }) => {
             max={5}
             placeholder="Organizer Rating"
             name="rating"
-            value={eventData.rating}
+            value={updateeventData.rating}
             onChange={handleChange}
             mb={2}
           />
@@ -160,35 +113,67 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction, props }) => {
             type="text"
             placeholder="Organizer Website"
             name="website"
-            value={eventData.website}
+            value={updateeventData.website}
             onChange={handleChange}
           />
-
-          <Button
-            p={0}
+          <Input
+            type="text"
+            placeholder="Address"
+            name="address"
+            value={updateeventData.address}
+            onChange={handleChange}
             mb={2}
-            variant={"ghost"}
-            _hover={{
-              textDecoration: "underline",
-              backgroundColor: "transparent",
-            }}
-            onClick={() => setLocationFormOpen(true)}
-          >
-            Add event location
-          </Button>
+          />
+
+          <Input
+            type="text"
+            name="locationName"
+            placeholder="City"
+            value={updateeventData.locationName}
+            onChange={handleChange}
+            mb={2}
+          />
+
+          <Input
+            type="number"
+            name="pincode"
+            placeholder="Pincode"
+            value={updateeventData.pincode}
+            onChange={handleChange}
+            mb={2}
+          />
+
+          <Input
+            type="text"
+            name="state"
+            placeholder="State"
+            value={updateeventData.state}
+            onChange={handleChange}
+            mb={2}
+          />
+
+          <Input
+            type="text"
+            name="country"
+            placeholder="Country"
+            value={updateeventData.country}
+            onChange={handleChange}
+            mb={2}
+          />          
         </ModalBody>
 
         <ModalFooter>
           <Button colorScheme="gray" mr={3} onClick={() => handleModalClose()}>
             Close
           </Button>
-          <Button colorScheme="orange" onClick={handleCreateEvent}>
-            Create Event
+          <Button colorScheme="orange" onClick={Updateform}>
+            Update Fields
           </Button>
         </ModalFooter>
+
       </ModalContent>
     </Modal>
-  );
-};
+);
+}
 
-export default CreateEventForm;
+export default Updateform;

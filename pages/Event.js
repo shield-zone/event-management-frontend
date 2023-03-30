@@ -211,6 +211,7 @@ const Event = () => {
       return changeAttendeeStatus;
     } else if (
       eventsOrganized.find((e) => e.eventId === modalEventData.eventId)
+      
     ) {
       return cancelEvent;
     }

@@ -32,8 +32,9 @@ const EventModal = ({
 
         <ModalBody>
           <Image
-            src={`https://source.unsplash.com/random?${data.eventType}&${data.eventId}}`}
+            src={`https://source.unsplash.com/random?celebration&${data.eventId}}`}
             alt={data.eventName}
+            height= "500px"
             width={"100%"}
           />
           <Stack mt="6" spacing="3">

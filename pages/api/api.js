@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:8080/api/v1";
+const baseUrl = "http://localhost:8090/api/v1";
 
 export const fetchAllEvents = async (state) => {
   const res = await fetch(`${baseUrl}/event/fetch-all-events`, {
@@ -89,6 +89,7 @@ export const createNewEvent = async (state, data) => {
     body: JSON.stringify({
       ...data,
       userId: state.user.user.userId,
+      eventType: "event"
     }),
   });
 

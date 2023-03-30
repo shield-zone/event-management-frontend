@@ -23,7 +23,7 @@ const EventCard = ({ event, onClick }) => {
     >
       <CardBody>
         <Image
-          src={`https://source.unsplash.com/random/200x200?${event.eventType}&${event.eventId}`}
+          src={`https://source.unsplash.com/random/200x200?celebration&${event.eventId}`}
           alt={event.eventName}
           width={"100%"}
           height={"200px"}
@@ -33,10 +33,6 @@ const EventCard = ({ event, onClick }) => {
             {event.eventName}
           </Heading>
           <Box>
-            <Text>
-              <span style={{ fontWeight: "bold" }}>Event Type</span>
-              {" " + event.eventType}
-            </Text>
             <Text>
               <span style={{ fontWeight: "bold" }}>Location</span>
               {" " +
