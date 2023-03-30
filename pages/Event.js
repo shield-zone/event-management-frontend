@@ -90,7 +90,7 @@ const Event = () => {
       }
       setEventsLoading(false);
     };
-
+    
     getAllEvents();
   }, []);
 
@@ -175,9 +175,11 @@ const Event = () => {
       setTimeout(() => {
         setErrorMessage("");
       }, 3000);
+      return;
     }
 
     const newAttendeeEvents = eventsAttending.filter((e) => e.id !== event.id);
+
     setEventsAttending(newAttendeeEvents);
     setModalEventData({});
     setEventModalOpen(false);
@@ -206,7 +208,6 @@ const Event = () => {
     ) {
       return cancelEvent;
     }
-
     return attendEvent;
   };
 

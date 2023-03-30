@@ -14,7 +14,6 @@ import { useContext } from "react";
 import { useRouter } from "next/router";
 import { IconUser } from "@tabler/icons-react";
 import Cookies from "js-cookie";
-
 import { AuthContext } from "../service/authContext";
 
 const Links = [{ name: "Home", href: "/Event" }];
@@ -93,7 +92,7 @@ const Navbar = () => {
       {!state.isAuthenticated ? (
         <NextLink href={"/Login"}>
           <Button
-            bgColor="#941b0c"
+            bgColor="#f3b52e" 
             _hover={{
               bgColor: "#fdfffc",
               color: "#941b0c",

@@ -9,6 +9,7 @@ import {
   Button,
   Input,
 } from "@chakra-ui/react";
+import CreateEventForm from "./CreateEventForm";
 
 const LocationForm = ({ isOpen, onClose, data, action }) => {
   const [locationData, setLocationData] = useState(data);

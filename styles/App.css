@@ -66,4 +66,18 @@
     }
     .tex{
         font-weight: bold;
+        font-size:large;
+    }
+    .container {
+      background-image: url('E:\HSC training\event-management-frontend\pages\banner.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+    .te{
+      color: #da2b14 ;
+      font-size: medium;
+      font-weight: 500;
+    }
+    .t{
+      font-weight: 500;
     }

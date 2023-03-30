@@ -9,13 +9,12 @@ import {
   ModalOverlay,
   ModalContent,
   Input,
-  Select,
   Box,
   Text,
 } from "@chakra-ui/react";
 import LocationForm from "./LocationForm";
 
-const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
+const CreateEventForm = ({ isOpen, onClose, data, btnAction,props}) => {
   const [eventData, setEventData] = useState({});
   const [locationData, setLocationData] = useState({});
   const [locationFormOpen, setLocationFormOpen] = useState(false);
@@ -23,12 +22,22 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
   const validated = () => {
     return true;
   };
+  
 
   const handleChange = (e) => {
     setEventData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleLocationSubmit = (locationData) => {
+    setEventData((prevState) => ({
+      ...prevState,
+      location: locationData,
+    }));
+    setLocationFormOpen(false);
+    console.log(locationData);
   };
 
   const handleModalClose = () => {
@@ -54,6 +63,19 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
     } else {
       alert("Please fill all the fields");
     }
+
+    console.log(eventData);
+
+    fetch("http://localhost:8090/api/v1/event/create-event-organizer-location", 
+    {
+      headers: {
+        Authorization: `Bearer ${state.user.token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(eventData)
+    })
   };
 
   return (
@@ -136,8 +158,8 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
           <Box>
             <Text fontWeight={"bold"}>Organizer Residing Since: </Text>
             <Input
-              type="date"
-              placeholder="Organizer Present at location since"
+              type="number"
+              placeholder="Organizer Present at location Since"
               name="presentSince"
               value={eventData.presentSince}
               onChange={handleChange}
@@ -182,7 +204,7 @@ const CreateEventForm = ({ isOpen, onClose, data, btnAction }) => {
           <Button colorScheme="gray" mr={3} onClick={() => handleModalClose()}>
             Close
           </Button>
-          <Button colorScheme="orange" onClick={handleCreateEvent}>
+          <Button colorScheme="orange" onClick={handleCreateEvent} >
             Create Event
           </Button>
         </ModalFooter>
