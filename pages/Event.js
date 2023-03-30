@@ -33,7 +33,7 @@ const Event = () => {
 
   useEffect(() => {
     const getAllEvents = async () => {
-      fetch("http://localhost:8080/api/v1/organizer/fetch-all-events", {
+      fetch("http://localhost:8090/api/v1/event/fetch-all-events", {
         headers: {
           Authorization: `Bearer ${state.user.token}`,
         },
@@ -47,12 +47,16 @@ const Event = () => {
               Cookies.remove("user");
               router.push("/");
             }, 3000);
-          } else if (response.status !== 200) {
+          } 
+          
+          else if (response.status !== 200) {
             setErrorMessage("Failed to fetch events");
             setTimeout(() => {
               setErrorMessage("");
             }, 3000);
-          } else {
+          } 
+          
+          else {
             return response.json();
           }
           return [];
@@ -60,7 +64,7 @@ const Event = () => {
         .then((data) => setEventData(data))
         .catch((err) => console.log(err));
     };
-
+    
     getAllEvents();
   }, []);
 
@@ -79,6 +83,7 @@ const Event = () => {
     setEventsAttending((state) => [...state, event]);
     setModalEventData({});
     setEventModalOpen(false);
+
   };
 
   const cancelEvent = (e) => {
@@ -91,7 +96,7 @@ const Event = () => {
   };
 
   const changeAttendeeStatus = (event) => {
-    const newAttendeeEvents = eventsAttending.filter((e) => e.id !== event.id);
+    const newAttendeeEvents = eventsAttending.filter((e) => e.eventId !== event.eventId);
     setEventsAttending(newAttendeeEvents);
     setModalEventData({});
     setEventModalOpen(false);
@@ -99,10 +104,10 @@ const Event = () => {
   };
 
   const modalActionText = () => {
-    if (eventsAttending.find((e) => e.id === modalEventData.id)) {
+    if (eventsAttending.find((e) => e.eventId === modalEventData.eventId)) {
       console.log("Found");
       return "Change Attendee Status";
-    } else if (eventsOrganized.find((e) => e.id === modalEventData.id)) {
+    } else if (eventsOrganized.find((e) => e.eventId === modalEventData.eventId)) {
       return "Cancel Event";
     }
 
@@ -110,13 +115,12 @@ const Event = () => {
   };
 
   const getModalAction = () => {
-    if (eventsAttending.find((e) => e.id === modalEventData.id)) {
+    if (eventsAttending.find((e) => e.eventId === modalEventData.eventId)) {
       console.log("Found");
-      return changeAttendeeStatus;
-    } else if (eventsOrganized.find((e) => e.id === modalEventData.id)) {
-      return cancelEvent;
+      return changeAttendeeStatus;  // remaining attendee
+    } else if (eventsOrganized.find((e) => e.eventId === modalEventData.eventId)) {
+      return cancelEvent;   // remaining organiser 
     }
-
     return attendEvent;
   };
 

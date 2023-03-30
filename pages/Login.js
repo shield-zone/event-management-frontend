@@ -45,7 +45,7 @@ function Login() {
       password,
     };
 
-    fetch("http://localhost:8080/api/v1/secure/login", {
+    fetch("http://localhost:8090/api/v1/secure/login", {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -67,11 +67,11 @@ function Login() {
         console.log(data);
         if (data) {
           Cookies.set("user", data.token);
-          Cookies.set("userId", data.user.userId);
-          Cookies.set("userName", data.user.userName);
+          Cookies.set("userId", data?.user.userId);
+          Cookies.set("userName", data?.user.userName);
           dispatch({
             type: "LOGIN",
-            payload: data,
+            payload: data
           });
           router.push("/Event");
         }
@@ -84,7 +84,7 @@ function Login() {
 
   return (
     <ChakraProvider theme={theme}>
-      <Container>
+      <Container >
         <br></br>
         <br></br>
         <br></br>
@@ -110,6 +110,7 @@ function Login() {
             <Input
               placeholder="Password"
               defaultValue={password}
+              type='password'
               onChange={(e) => mypassword(e.target.value)}
             />
           </VStack>
