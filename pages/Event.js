@@ -45,7 +45,7 @@ const Event = () => {
   useEffect(() => {
     const getEventsAttended = async () => {
       const res = getAttendedEvents(eventData, state);
-      console.log("Attending", res);
+      const data = res.filter(filterEvents)
       setEventsAttending(res);
     };
 
@@ -55,7 +55,8 @@ const Event = () => {
   useEffect(() => {
     const getEventsOrganized = () => {
       const res = getOrganizedEvents(eventData, state);
-      setEventsOrganized(res);
+      const data = res.filter(filterEvents)
+      setEventsOrganized(data);
     };
 
     if (eventData.length) getEventsOrganized();
@@ -68,7 +69,6 @@ const Event = () => {
         const res = await fetchAllEvents(state);
         const resStatus = res.status;
         const resData = await res.json();
-        console.log(resStatus, resData);
 
         if (resStatus === 403) {
           setErrorMessage("User Unauthenticated");
@@ -79,8 +79,7 @@ const Event = () => {
             setErrorMessage("");
           }, 3000);
         } else {
-          console.log("here");
-          setEventData(resData);
+          setEventData(resData.filter(filterEvents));
         }
       } catch (err) {
         setErrorMessage("Failed to fetch events");
@@ -93,6 +92,11 @@ const Event = () => {
     
     getAllEvents();
   }, []);
+
+  const filterEvents = data => !data.deleted && (new Date(data.endDate) > new Date())
+  
+  console.log(eventsOrganized);
+  console.log(eventData);
 
   const logoutUser = () => {
     setErrorMessage("");
@@ -155,9 +159,11 @@ const Event = () => {
       return;
     } else {
       const newOrganizedEvents = eventsOrganized.filter(
-        (event) => event.event_name != modalEventData.event_name
+        (event) => event.eventId != modalEventData.eventId
       );
-      setModalEventData(newOrganizedEvents);
+      setEventsOrganized(newOrganizedEvents);
+      setEventData(state => state.filter(event => event.eventId != modalEventData.eventId))
+      setModalEventData({});
       setEventModalOpen(false);
       alert("Event Cancelled");
     }
@@ -183,7 +189,7 @@ const Event = () => {
     setEventsAttending(newAttendeeEvents);
     setModalEventData({});
     setEventModalOpen(false);
-    alert(`Removed Event ${event.event_name}`);
+    alert(`Removed Event ${event.eventName}`);
   };
 
   const modalActionText = () => {
@@ -220,22 +226,30 @@ const Event = () => {
   };
 
   const createEvent = async (data) => {
-    const res = await createNewEvent(state, data);
-    const resData = await res.json();
+    try {
+      const res = await createNewEvent(state, data);
+      const resData = await res.json();
 
-    if (res.status === 403) {
-      setErrorMessage("User Unauthenticated");
-      setTimeout(logoutUser, 3000);
-      return;
-    } else if (res.status !== 200) {
-      setErrorMessage("Failed to create event");
+      if (res.status === 403) {
+        setErrorMessage("User Unauthenticated");
+        setTimeout(logoutUser, 3000);
+        return;
+      } else if (res.status !== 200) {
+        setErrorMessage("Failed to create event");
+        setTimeout(() => {
+          setErrorMessage("");
+        }, 3000);
+        return;
+      } else {
+        setEventsOrganized((state) => [...state, resData]);
+        setEventData((state) => [...state, resData]);
+        setCreateEventFormOpen(false);
+      }
+    } catch(err) {
+      setErrorMessage("Failed to fetch event");
       setTimeout(() => {
         setErrorMessage("");
       }, 3000);
-      return;
-    } else {
-      setEventsOrganized((state) => [...state, resData]);
-      setCreateEventFormOpen(false);
     }
   };
 
@@ -289,7 +303,7 @@ const Event = () => {
       {eventsOrganized.length ? (
         <EventRow
           title="Events Organized by You:"
-          data={eventsOrganized.filter(data => !data.deleted)}
+          data={eventsOrganized.filter(data => !data.deleted && (new Date(data.endDate) > new Date()))}
           onCardClick={handleEventCardClick}
         />
       ) : null}
@@ -297,15 +311,15 @@ const Event = () => {
       {eventsAttending.length ? (
         <EventRow
           title="Future Events you're Attending:"
-          data={eventsAttending.filter(data => !data.deleted)}
+          data={eventsAttending.filter(data => !data.deleted && (new Date(data.endDate) > new Date()))}
           onCardClick={handleEventCardClick}
         />
       ) : null}
 
       {!eventsLoading ? (
         <EventRow
-          title="Events Recommended for You:"
-          data={eventData.filter(data => !data.deleted)}
+          title="All Events:"
+          data={eventData.filter(data => !data.deleted && (new Date(data.endDate) > new Date()))}
           onCardClick={handleEventCardClick}
         />
       ) : (
